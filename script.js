@@ -1,20 +1,26 @@
 //캔버스 세팅
 let canvas;
 let ctx;
-canvas = document.createElement("canvas");
+let container;
+
+canvas = document.getElementById("canvas")
 ctx = canvas.getContext("2d");
 canvas.width = "400";
 canvas.height = "600";
-document.body.appendChild(canvas);
 
+container = document.getElementById("container");
+container.appendChild(canvas);
+
+//이미지를 받아오는 변수
+let backgroundImg, catImg, heartImg, poopImg, gameoverImg;
+
+//스코어, 게임오버 변수
 let gameOver = false; //true면 게임 오버
 let score = 0;
 
 //고양이 좌표
 let catImgX = canvas.width / 2 - 32;
 let catImgY = canvas.height - 68;
-
-let backgroundImg, catImg, heartImg, poopImg, gameoverImg;
 
 //하트를 저장하는 리스트
 let heartList = [];
@@ -33,7 +39,13 @@ function Heart() {
 
   //하트를 업데이트해주는 함수
   this.update = function () {
-    this.y -= 7;
+    //하트가 장애물 생성 위치 위로 올라가지 못하게함
+    if(this.y <= canvas.height-550) {
+      this.alive = false;
+    } else {
+      this.y -= 7;
+    }
+    
   }
 
   //하트와 장애물이 닿았을때를 처리하는 함수
@@ -48,9 +60,8 @@ function Heart() {
         score++;
         this.alive = false;
         poopList.splice(i, 1);
-      }
+      } 
     }
-
   }
 }
 
@@ -66,7 +77,7 @@ function Poop() {
   this.x = 0;
   this.y = 0;
 
-  //하트의 위치값을 하트리스트에 저장,초기화 해주는 함수
+  //장애물의 위치값을 장애물리스트에 저장,초기화 해주는 함수
   this.init = function () {
     this.x = generateRandomValue(0, canvas.width - 64); //랜덤함수를 통해 반환된 리턴값이 x에 저장됨
     this.y = 0;
@@ -148,7 +159,6 @@ function setupKeyboardListener() {
 }
 
 function creatHeart() {
-  console.log("하트생성")
   let h = new Heart(); //하트를 하나 생성
   h.init();
   //console.log("새로운 총알 리스트", heartList);
